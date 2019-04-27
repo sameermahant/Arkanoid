@@ -36,3 +36,10 @@ cmake-build-*/
 
 # CLion
 .idea/*
+
+# Eclipse files
+.cproject
+.project
+
+# KDevelop files
+*.kdev4
