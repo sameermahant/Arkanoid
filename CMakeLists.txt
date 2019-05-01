@@ -1,71 +1,60 @@
-# ==============================================================================
-#                            Mandatory CMake command
-# ==============================================================================
-cmake_minimum_required(VERSION 3.12)
+# ======================================================================
+# CMake mandatory command
+# ======================================================================
+cmake_minimum_required(VERSION 3.14)
 
-# ==============================================================================
-#                           Project specific settings
-# ==============================================================================
-project(Arkanoid
-        VERSION 0.1.0.0
-        DESCRIPTION "Simple game using C++14/C++17 features and SFML"
-        HOMEPAGE_URL "https://github.com/sameermahant/Arkanoid"
-        LANGUAGES CXX)
+# ======================================================================
+# Project related configuration
+# ======================================================================
+project("Arkanoid")
 
-# ==============================================================================
-#                             Common CMake settings
-# ==============================================================================
+# ======================================================================
+# CMake command
+# ======================================================================
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-set(COMPILER_FLAGS "-march=core2 -fno-var-tracking -fexceptions -finline-functions")
-set(COMPILER_WARRNINGS "-Wall -Werror -Wextra -Wno-unused-function -Wno-deprecated-declarations -Wno-sign-compare -Wunused-parameter -Wignored-qualifiers -Wtype-limits -Wduplicated-cond -Wno-class-memaccess")
+set(COMPILER_FLAGS "-march=native")
+set(COMPILER_WARRNINGS "-Wall -Werror -Wextra")
 
 set(CMAKE_CXX_FLAGS "${COMPILER_FLAGS} ${COMPILER_WARRNINGS}")
 
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message("Setting build type to 'RelWithDebInfo' as none was specified.")
-    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
+# ======================================================================
+# External libraries configuration
+# ======================================================================
+set(SFML_INCLUDE_DIR "/opt/external/SFML-2.5.1/include")
+set(SFML_LIB_DIR "/opt/external/SFML-2.5.1/lib")
+set(LIB_STDCPP_DIR "/opt/external/libstdcpp64")
 
-# ==============================================================================
-#                         External libraries / packages
-# ==============================================================================
+# ======================================================================
+# Test configuration
+# ======================================================================
 
-# ==============================================================================
-#                                      Test
-# ==============================================================================
+# ======================================================================
+# Package configuration
+# ======================================================================
 
-# ==============================================================================
-#                                    Coverage
-# ==============================================================================
+# ======================================================================
+# Targets
+# ======================================================================
+add_executable(Arkanoid
+    src/Main.cpp
+    src/Game.cpp)
 
-# ==============================================================================
-#                              Package information
-# ==============================================================================
+target_include_directories(Arkanoid PRIVATE ${SFML_INCLUDE_DIR})
+target_link_directories(Arkanoid PRIVATE ${SFML_LIB_DIR})
+target_link_libraries(Arkanoid PRIVATE sfml-system sfml-window sfml-graphics)
+set_target_properties(Arkanoid PROPERTIES
+    INSTALL_RPATH ${LIB_STDCPP_DIR}
+    BUILD_WITH_INSTALL_RPATH TRUE)
 
-# ==============================================================================
-#                                    Summary
-# ==============================================================================
-message(STATUS "=== ${CMAKE_PROJECT_NAME} ===")
-message(STATUS "Project version     : ${CMAKE_PROJECT_VERSION}")
-message(STATUS "Project description : ${CMAKE_PROJECT_DESCRIPTION}")
-message(STATUS "Project homepage URL: ${CMAKE_PROJECT_HOMEPAGE_URL}")
+# ======================================================================
+# Summary
+# ======================================================================
+message(STATUS "=== ${PROJECT_NAME} ===")
 message(STATUS "C++ Version         : ${CMAKE_CXX_STANDARD}")
 message(STATUS "C++ Compilar Flags  : ${CMAKE_CXX_FLAGS}")
-message(STATUS "CMake build type    : ${CMAKE_BUILD_TYPE}")
+message(STATUS "CMake Build Type    : ${CMAKE_BUILD_TYPE}")
 message(STATUS "=== >>>><<<< ===")
-
-# ==============================================================================
-#                                Custom Commands
-# ==============================================================================
-
-# ==============================================================================
-#                                    Targets
-# ==============================================================================
-add_executable(Arkanoid src/Main.cpp)
-
-set_property(TARGET Arkanoid PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
