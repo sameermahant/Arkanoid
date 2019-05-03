@@ -44,6 +44,8 @@ add_executable(Arkanoid
     src/Game.cpp
     src/Circle.cpp
     src/Ball.cpp
+    src/Rectangle.cpp
+    src/Paddle.cpp
     )
 
 target_include_directories(Arkanoid PRIVATE ${SFML_INCLUDE_DIR})
