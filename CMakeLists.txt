@@ -41,14 +41,18 @@ set(LIB_STDCPP_DIR "/opt/external/libstdcpp64")
 # ======================================================================
 add_executable(Arkanoid
     src/Main.cpp
-    src/Game.cpp)
+    src/Game.cpp
+    src/Circle.cpp
+    src/Ball.cpp
+    )
 
 target_include_directories(Arkanoid PRIVATE ${SFML_INCLUDE_DIR})
 target_link_directories(Arkanoid PRIVATE ${SFML_LIB_DIR})
 target_link_libraries(Arkanoid PRIVATE sfml-system sfml-window sfml-graphics)
-set_target_properties(Arkanoid PROPERTIES
-    INSTALL_RPATH ${LIB_STDCPP_DIR}
-    BUILD_WITH_INSTALL_RPATH TRUE)
+set_target_properties(Arkanoid PROPERTIES BUILD_RPATH "${SFML_LIB_DIR}")
+#set_target_properties(Arkanoid PROPERTIES
+#    INSTALL_RPATH ${LIB_STDCPP_DIR}
+#    BUILD_WITH_INSTALL_RPATH TRUE)
 
 # ======================================================================
 # Summary

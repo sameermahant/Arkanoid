@@ -1,8 +1,12 @@
 #include "Game.hpp"
 
-Game::Game() { window_.setFramerateLimit(60); }
+Game::Game()
+{
+    window_.setFramerateLimit(60);
+}
 
-void Game::runGameLoop() {
+void Game::runGameLoop()
+{
     while (true) {
         window_.clear(sf::Color::Black);
 

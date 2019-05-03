@@ -5,12 +5,11 @@
 #include <SFML/Graphics.hpp>
 
 class Game {
-public:
-  Game();
+  public:
+    Game();
 
-  void runGameLoop();
+    void runGameLoop();
 
-private:
-  sf::RenderWindow window_{ { Settings::windowWidth, Settings::windowHeight },
-                            Settings::windowTitle };
+  private:
+    sf::RenderWindow window_{{Settings::windowWidth, Settings::windowHeight}, Settings::windowTitle};
 };
