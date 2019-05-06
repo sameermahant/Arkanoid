@@ -6,7 +6,7 @@
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv, [[maybe_unused]] char* envp[])
 {
     Game game;
-    game.start();
+    game.restart();
     game.runGameLoop();
 
     return EXIT_SUCCESS;

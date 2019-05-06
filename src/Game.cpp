@@ -1,6 +1,12 @@
 #include "Game.hpp"
 
+#include "Ball.hpp"
+#include "Brick.hpp"
+#include "GameLogic.Impl.hpp"
+#include "Paddle.hpp"
+
 #include <iostream>
+
 Game::Game()
 {
     window_.setFramerateLimit(60);
@@ -12,31 +18,40 @@ Game::Game()
     stateText_.setCharacterSize(35);
     stateText_.setFillColor(sf::Color::White);
     stateText_.setString("Paused");
+
+    livesText_.setFont(fontName_);
+    livesText_.setPosition(10, 10);
+    livesText_.setCharacterSize(15);
+    livesText_.setFillColor(sf::Color::White);
 }
 
-void Game::start()
+void Game::restart()
 {
-    state_ = State::Initial;
-    stateText_.setString("Press 'Enter' to start \nPress 'Esc' to quit");
+    remainingLives_ = 3;
 
-    while (true) {
-        window_.clear(sf::Color::Blue);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-            state_ = State::Running;
-            break;
+    state_ = State::Paused;
+    manager_.clear();
+
+    for (int row{1}; row <= Settings::brickRows; ++row) {
+        for (int column{1}; column <= Settings::brickColumns; ++column) {
+            float x{column * (Brick::defaultWidth + Settings::brickSpacing)};
+            float y{row * (Brick::defaultHeight + Settings::brickSpacing)};
+            x += Settings::brickOffsetX;
+            y += Settings::brickOffsetY;
+
+            auto& brick(manager_.create<Brick>(x, y));
+            brick.setStrength(1);
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
-            break;
-        }
-        window_.draw(stateText_);
-        window_.display();
     }
+
+    manager_.create<Ball>(Settings::windowWidth / 2.0f, Settings::windowHeight / 2.0f);
+    manager_.create<Paddle>(Settings::windowWidth / 2, Settings::windowHeight - 50);
 }
 
 void Game::runGameLoop()
 {
     while (true) {
-        window_.clear(sf::Color::Blue);
+        window_.clear(sf::Color::Black);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
             break;
@@ -56,7 +71,7 @@ void Game::runGameLoop()
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
-            reset();
+            restart();
         }
 
         if (state_ != State::Running) {
@@ -68,20 +83,37 @@ void Game::runGameLoop()
                 stateText_.setString("You won!");
             }
             window_.draw(stateText_);
-        } else {
-            stateText_.setString("Running");
-            window_.draw(stateText_);
+
+        } else { // Game logic
+
+            if (manager_.getAll<Ball>().empty()) {
+                manager_.create<Ball>(Settings::windowWidth / 2.0f, Settings::windowHeight / 2.0f);
+                --remainingLives_;
+            }
+
+            if (manager_.getAll<Brick>().empty()) {
+                state_ = State::Victory;
+            }
+
+            if (remainingLives_ <= 0) {
+                state_ = State::GameOver;
+            }
+
+            manager_.update();
+
+            manager_.forEachEntity<Ball>([this](auto& ball) {
+                manager_.forEachEntity<Brick>([&ball](auto& brick) { solveBrickBallCollision(brick, ball); });
+                manager_.forEachEntity<Paddle>([&ball](auto& paddle) { solvePaddleBallCollision(paddle, ball); });
+            });
+
+            manager_.refresh();
+            manager_.render(window_);
+
+            livesText_.setString("Lives: " + std::to_string(remainingLives_));
+
+            window_.draw(livesText_);
         }
 
         window_.display();
     }
-}
-
-void Game::reset()
-{
-    state_ = State::Running;
-    stateText_.setString("Restarting the game in 3 seconds");
-    window_.draw(stateText_);
-    window_.display();
-    sf::sleep(sf::seconds(3));
 }
