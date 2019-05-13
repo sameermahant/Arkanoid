@@ -24,8 +24,8 @@ set(CMAKE_CXX_FLAGS "${COMPILER_FLAGS} ${COMPILER_WARRNINGS}")
 # ======================================================================
 # External libraries configuration
 # ======================================================================
-set(SFML_INCLUDE_DIR "/opt/external/SFML-2.5.1/include")
-set(SFML_LIB_DIR "/opt/external/SFML-2.5.1/lib")
+set(SFML_INCLUDE_DIR "/opt/toolchain/SFML-2.5.1/include")
+set(SFML_LIB_DIR "/opt/toolchain/SFML-2.5.1/lib")
 set(LIB_STDCPP_DIR "/opt/external/libstdcpp64")
 
 # ======================================================================

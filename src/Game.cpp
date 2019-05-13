@@ -7,26 +7,27 @@
 
 #include <iostream>
 
-Game::Game()
-{
+Game::Game() {
     window_.setFramerateLimit(60);
 
-    fontName_.loadFromFile(R"(/usr/share/fonts/open-sans/OpenSans-Bold.ttf)");
+    fontName_.loadFromFile(R"(/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf)");
 
+    stateText_.setString("Paused");
     stateText_.setFont(fontName_);
-    stateText_.setPosition(10, 10);
     stateText_.setCharacterSize(35);
     stateText_.setFillColor(sf::Color::White);
-    stateText_.setString("Paused");
+    stateText_.setOrigin(stateText_.getGlobalBounds().left / 2.0f, stateText_.getGlobalBounds().top / 2.0f);
+    auto posX = (Settings::windowWidth - stateText_.getGlobalBounds().width) / 2.0f;
+    auto posY = (Settings::windowHeight - stateText_.getGlobalBounds().height) / 2.0f;
+    stateText_.setPosition(sf::Vector2f(posX, posY));
 
     livesText_.setFont(fontName_);
-    livesText_.setPosition(10, 10);
+    livesText_.setPosition(60, 10);
     livesText_.setCharacterSize(15);
     livesText_.setFillColor(sf::Color::White);
 }
 
-void Game::restart()
-{
+void Game::restart() {
     remainingLives_ = 3;
 
     state_ = State::Paused;
@@ -39,7 +40,7 @@ void Game::restart()
             x += Settings::brickOffsetX;
             y += Settings::brickOffsetY;
 
-            auto& brick(manager_.create<Brick>(x, y));
+            auto &brick(manager_.create<Brick>(x, y));
             brick.setStrength(1);
         }
     }
@@ -48,8 +49,7 @@ void Game::restart()
     manager_.create<Paddle>(Settings::windowWidth / 2, Settings::windowHeight - 50);
 }
 
-void Game::runGameLoop()
-{
+void Game::runGameLoop() {
     while (true) {
         window_.clear(sf::Color::Black);
 
@@ -82,6 +82,9 @@ void Game::runGameLoop()
             } else if (state_ == State::Victory) {
                 stateText_.setString("You won!");
             }
+            auto posX = (Settings::windowWidth - stateText_.getGlobalBounds().width) / 2.0f;
+            auto posY = (Settings::windowHeight - stateText_.getGlobalBounds().height) / 2.0f;
+            stateText_.setPosition(sf::Vector2f(posX, posY));
             window_.draw(stateText_);
 
         } else { // Game logic
@@ -101,9 +104,9 @@ void Game::runGameLoop()
 
             manager_.update();
 
-            manager_.forEachEntity<Ball>([this](auto& ball) {
-                manager_.forEachEntity<Brick>([&ball](auto& brick) { solveBrickBallCollision(brick, ball); });
-                manager_.forEachEntity<Paddle>([&ball](auto& paddle) { solvePaddleBallCollision(paddle, ball); });
+            manager_.forEachEntity<Ball>([this](auto &ball) {
+                manager_.forEachEntity<Brick>([&ball](auto &brick) { solveBrickBallCollision(brick, ball); });
+                manager_.forEachEntity<Paddle>([&ball](auto &paddle) { solvePaddleBallCollision(paddle, ball); });
             });
 
             manager_.refresh();
