@@ -13,14 +13,18 @@ class Manager {
     void update();
     void render(sf::RenderWindow& target);
 
+    // T => Entity Type
+    // TArgs => Arguments that will be forwarded to create entity
     template<typename T, typename... TArgs>
     T& create(TArgs&&... args)
     {
+        // Check if T is derived from Entity
         static_assert(std::is_base_of<Entity, T>::value, "`T` must be derived from `Entity`");
 
         auto uniquePtr(std::make_unique<T>(std::forward<TArgs>(args)...));
         auto rawPtr(uniquePtr.get());
 
+        // Add new entity to MAP with key as its type
         groupedEntities_[typeid(T).hash_code()].emplace_back(rawPtr);
         entities_.emplace_back(std::move(uniquePtr));
 
@@ -43,5 +47,6 @@ class Manager {
 
   private:
     std::vector<std::unique_ptr<Entity>> entities_;
+    // Entities grouped by types
     std::map<std::size_t, std::vector<Entity*>> groupedEntities_;
 };

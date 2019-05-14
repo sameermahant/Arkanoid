@@ -9,7 +9,7 @@ class Ball
   public:
     static const sf::Color defaultColor;
     static constexpr float defaultRadius{10.0f};
-    static constexpr float defaultVelocity{3.0f};
+    static constexpr float defaultVelocity{5.0f};
 
     Ball(float x, float y);
     ~Ball() override;

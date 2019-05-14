@@ -1,13 +1,13 @@
 #include "Manager.hpp"
 
+// This function will do the job of cleaning the entities which are marked to destroy
 void Manager::refresh()
 {
-    for (auto& pair : groupedEntities_) {
-        auto& entitiesVector(pair.second);
+    for (auto& [entity_type, vector_entity_ptrs] : groupedEntities_) {
 
-        entitiesVector.erase(std::remove_if(std::begin(entitiesVector), std::end(entitiesVector),
-                                            [](auto rawPtr) { return rawPtr->isMarkedToDestroy(); }),
-                             std::end(entitiesVector));
+        vector_entity_ptrs.erase(std::remove_if(std::begin(vector_entity_ptrs), std::end(vector_entity_ptrs),
+                                                [](auto rawPtr) { return rawPtr->isMarkedToDestroy(); }),
+                                 std::end(vector_entity_ptrs));
 
         entities_.erase(std::remove_if(std::begin(entities_), std::end(entities_),
                                        [](const auto& uniquePtr) { return uniquePtr->isMarkedToDestroy(); }),
